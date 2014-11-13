@@ -1,5 +1,5 @@
 require_relative 'crawler'
-
+ 
 class Site
 
   include Crawler

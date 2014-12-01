@@ -1,6 +1,7 @@
 require 'nokogiri'
 require 'uri'
 require 'open-uri'
+require 'pry'
 
 module Crawler
 
@@ -29,9 +30,9 @@ module Crawler
       begin
         uri = URI(URI.encode(link))
         if uri.absolute? && uri.hostname == domain &&
-        (uri.scheme == "http" || uri.scheme == "https")
+        (uri.scheme == "http" || uri.scheme == "https") && !fragmented?(link)
           URI.decode(uri.to_s)
-        elsif uri.relative?
+        elsif uri.relative? && !fragmented?(link)
           URI.decode(URI(URI.encode(base_url)).merge(uri).to_s)
         end
       rescue Exception => e
@@ -48,6 +49,10 @@ module Crawler
   def reachable?(url)
     return true if get_page(url)
     false
+  end
+
+  def fragmented?(url)
+    !(URI(url).fragment.nil?)
   end
 
 end

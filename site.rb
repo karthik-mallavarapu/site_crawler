@@ -16,7 +16,7 @@ class Site
     @pages = []
     @pages_to_visit = []
     @inbound_pages = Hash.new { [] }
-    @outbound_page_counts = Hash.new(1)
+    @outbound_page_counts = Hash.new(0)
     @page_ranks = {}
     enqueue(@base_url)
   end
@@ -35,18 +35,18 @@ class Site
       end
     end
   end
-
+  # PR(A) = (1-d) + d * (PR(B)/Nb + PR(C)/Nc + ..)
   def page_rank
     pages.each do |page|
       @page_ranks[page] = INIT_PAGE_RANK
     end
-    30.times do
+    40.times do
       pages.each do |page|
         temp_pr = 0
         @inbound_pages[page].each do |inbound|
           temp_pr += @page_ranks[inbound] / @outbound_page_counts[inbound]
         end
-        @page_ranks[page] = (1 - DAMP_FACTOR) + DAMP_FACTOR * temp_pr
+        @page_ranks[page] = ((1 - DAMP_FACTOR) + (DAMP_FACTOR * temp_pr)).round(4)
       end
     end
     @page_ranks = Hash[@page_ranks.sort_by { |k, v| v }.reverse]

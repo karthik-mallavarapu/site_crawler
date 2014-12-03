@@ -6,7 +6,7 @@ class Site
 
   attr_reader :pages, :base_url, :domain
 
-  INIT_PAGE_RANK = 1
+  INIT_PR = 1
   DAMP_FACTOR = 0.85
 
   def initialize(url, url_limit=50)
@@ -35,21 +35,11 @@ class Site
       end
     end
   end
+
   # PR(A) = (1-d) + d * (PR(B)/Nb + PR(C)/Nc + ..)
+  # Iterate for convergence
   def page_rank
-    pages.each do |page|
-      @page_ranks[page] = INIT_PAGE_RANK
-    end
-    40.times do
-      pages.each do |page|
-        temp_pr = 0
-        @inbound_pages[page].each do |inbound|
-          temp_pr += @page_ranks[inbound] / @outbound_page_counts[inbound]
-        end
-        @page_ranks[page] = ((1 - DAMP_FACTOR) + (DAMP_FACTOR * temp_pr)).round(4)
-      end
-    end
-    @page_ranks = Hash[@page_ranks.sort_by { |k, v| v }.reverse]
+
   end
 
   def print_pages
@@ -84,6 +74,12 @@ class Site
 
   def visit_page(url)
     @pages << url
+  end
+
+  def init_pagerank
+    pages.each do |page|
+      @page_ranks[page] = 1
+    end
   end
 
   def save_outbound_count(url, count)

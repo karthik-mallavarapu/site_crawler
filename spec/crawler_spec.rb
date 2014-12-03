@@ -87,7 +87,7 @@ describe Crawler do
 
   describe "#sanitize_urls" do
 
-    { "/site1" => "/site1", "site2" => "/site2", "#site3" => "/#site3" }.
+    { "/site1" => "/site1", "site2" => "/site2" }.
     each do |url, result|
 
       it "transforms a relative url to an absolute url" do
@@ -136,7 +136,7 @@ describe Crawler do
     each do |url|
 
       it "ignores links not matching the hostname" do
-        expect(@actual_result.include? url).not_to eq true 
+        expect(@actual_result.include? url).not_to eq true
       end
 
     end
